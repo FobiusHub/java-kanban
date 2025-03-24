@@ -1,4 +1,10 @@
-import java.util.HashMap;
+import ru.practicum.manager.TaskManager;
+import ru.practicum.model.Epic;
+import ru.practicum.model.Status;
+import ru.practicum.model.Subtask;
+import ru.practicum.model.Task;
+
+import java.util.List;
 
 public class Main {
 
@@ -60,22 +66,22 @@ public class Main {
         System.out.println("_".repeat(100));
     }
 
-    public static void showTaskList(HashMap<Integer, Task> taskList) {
-        for(Task task : taskList.values()) {
+    public static void showTaskList(List<Task> taskList) {
+        for(Task task : taskList) {
             System.out.println(task);
         }
         System.out.println();
     }
 
-    public static void showSubtaskList(HashMap<Integer, Subtask> taskList) {
-        for(Subtask task : taskList.values()) {
+    public static void showSubtaskList(List<Subtask> taskList) {
+        for(Subtask task : taskList) {
             System.out.println(task);
         }
         System.out.println();
     }
 
-    public static void showEpicList(HashMap<Integer, Epic> taskList) {
-        for(Epic task : taskList.values()) {
+    public static void showEpicList(List<Epic> taskList) {
+        for(Epic task : taskList) {
             System.out.println(task);
         }
         System.out.println();

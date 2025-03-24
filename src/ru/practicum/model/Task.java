@@ -1,12 +1,14 @@
+package ru.practicum.model;
+
 import java.util.Objects;
 
 public class Task {
-    private int id;
-    private String name;
-    private String description;
-    private Status status;
+    protected int id;
+    protected String name;
+    protected String description;
+    protected Status status;
 
-    Task(String name, String description) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
@@ -28,12 +30,12 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "ru.practicum.model.Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

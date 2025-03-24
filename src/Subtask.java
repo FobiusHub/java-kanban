@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 public class Subtask extends Task {
     private Epic epic;
 
@@ -11,6 +9,12 @@ public class Subtask extends Task {
 
     public Epic getEpic() {
         return epic;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        super.setStatus(status);
+        epic.updateStatus();
     }
 
     @Override

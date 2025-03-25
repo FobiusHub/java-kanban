@@ -10,30 +10,21 @@ import java.util.List;
 
 public class TaskManager {
     private int id = 0;
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Epic> epics;
-    private final HashMap<Integer, Subtask> subtasks;
-
-    public TaskManager() {
-        tasks = new HashMap<>();
-        epics = new HashMap<>();
-        subtasks = new HashMap<>();
-    }
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     //Получение списка всех задач.
     public List<Task> getTaskList() {
-        List<Task> taskList = new ArrayList<>(tasks.values());
-        return taskList;
+        return new ArrayList<>(tasks.values());
     }
 
     public List<Epic> getEpicList() {
-        List<Epic> epicList = new ArrayList<>(epics.values());
-        return epicList;
+        return new ArrayList<>(epics.values());
     }
 
     public List<Subtask> getSubtaskList() {
-        List<Subtask> subtaskList = new ArrayList<>(subtasks.values());
-        return subtaskList;
+        return new ArrayList<>(subtasks.values());
     }
 
     //Удаление всех задач.
@@ -47,8 +38,8 @@ public class TaskManager {
     }
 
     public void clearSubtasks() {
-        for(Epic epic : epics.values()) {
-            epic.getEpicSubtasks().clear();
+        for (Epic epic : epics.values()) {
+            epic.clearSubtasks();
         }
         subtasks.clear();
     }
@@ -81,7 +72,7 @@ public class TaskManager {
 
     public int addSubtask(Subtask subtask) {
         Epic subtaskEpic = subtask.getEpic();
-        if(subtaskEpic == null || !epics.containsKey(subtaskEpic.getId()))
+        if (subtaskEpic == null || !epics.containsKey(subtaskEpic.getId()))
             return -1;
         subtask.setId(id);
         subtasks.put(id, subtask);
@@ -92,13 +83,13 @@ public class TaskManager {
     //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     public void updateTask(Task task) {
         int key = task.getId();
-        if(tasks.containsKey(key))
+        if (tasks.containsKey(key))
             tasks.put(key, task);
     }
 
     public void updateEpic(Epic epic) {
         int key = epic.getId();
-        if(epics.containsKey(key)) {
+        if (epics.containsKey(key)) {
             Epic toUpdate = epics.get(key);
             toUpdate.setName(epic.getName());
             toUpdate.setDescription(epic.getDescription());
@@ -107,7 +98,7 @@ public class TaskManager {
 
     public void updateSubtask(Subtask subtask) {
         int key = subtask.getId();
-        if(subtasks.containsKey(key)) {
+        if (subtasks.containsKey(key)) {
             subtasks.put(key, subtask);
             subtask.getEpic().updateSubtask(subtask);
         }
@@ -119,19 +110,18 @@ public class TaskManager {
     }
 
     public void deleteEpic(int id) {
-        if(epics.containsKey(id)) {
+        if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
             List<Subtask> subtaskList = epic.getEpicSubtasks();
             for (Subtask subtask : subtaskList) {
                 subtasks.remove(subtask.getId());
             }
-            epic.clearSubtasks();
             epics.remove(id);
         }
     }
 
     public void deleteSubtask(int id) {
-        if(subtasks.containsKey(id)) {
+        if (subtasks.containsKey(id)) {
             Subtask subtask = subtasks.get(id);
             subtasks.remove(id);
             subtask.getEpic().deleteSubtask(subtask);
@@ -139,8 +129,8 @@ public class TaskManager {
     }
 
     //Получение списка всех подзадач определённого эпика.
-    public List<Subtask> getEpicSubtasks (int id) {
-        if(!epics.containsKey(id))
+    public List<Subtask> getEpicSubtasks(int id) {
+        if (!epics.containsKey(id))
             return null;
         return epics.get(id).getEpicSubtasks();
     }

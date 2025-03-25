@@ -1,7 +1,7 @@
 package ru.practicum.model;
 
 public class Subtask extends Task {
-    private Epic epic;
+    private final Epic epic;
 
     public Subtask(String name, String description, Epic epic) {
         super(name, description);

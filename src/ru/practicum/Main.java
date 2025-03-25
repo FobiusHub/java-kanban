@@ -1,3 +1,5 @@
+package ru.practicum;
+
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Status;

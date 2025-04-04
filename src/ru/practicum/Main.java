@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import ru.practicum.manager.Managers;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Status;
@@ -11,7 +12,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
         Task task1 = new Task("Турка", "Помыть турку");
         taskManager.addTask(task1);
         Task task2 = new Task("Кофе", "Сварить кофе");
@@ -29,9 +30,8 @@ public class Main {
         Subtask subtask3 = new Subtask("Мойка", "Отвезти машину на мойку", epic2);
         taskManager.addSubtask(subtask3);
 
-        showTaskList(taskManager.getTaskList());
-        showEpicList(taskManager.getEpicList());
-        showSubtaskList(taskManager.getSubtaskList());
+        printAllTasks(taskManager);
+
         System.out.println("_".repeat(100));
         epic1.setStatus(Status.IN_PROGRESS);
 
@@ -43,49 +43,48 @@ public class Main {
         subtask1.setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(subtask1);
 
-        showTaskList(taskManager.getTaskList());
-        showEpicList(taskManager.getEpicList());
-        showSubtaskList(taskManager.getSubtaskList());
-        System.out.println("_".repeat(100));
-
         subtask3.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask3);
 
-        showEpicList(taskManager.getEpicList());
-        showSubtaskList(taskManager.getSubtaskList());
-        System.out.println("_".repeat(100));
-
-        taskManager.deleteSubtask(subtask3.getId());
-
-        showEpicList(taskManager.getEpicList());
-        showSubtaskList(taskManager.getSubtaskList());
-        System.out.println("_".repeat(100));
-
         taskManager.deleteEpic(epic1.getId());
 
-        showEpicList(taskManager.getEpicList());
-        showSubtaskList(taskManager.getSubtaskList());
         System.out.println("_".repeat(100));
+
+        taskManager.getEpic(5);
+
+        printAllTasks(taskManager);
     }
 
-    public static void showTaskList(List<Task> taskList) {
-        for(Task task : taskList) {
+    public static <T extends Task> void showTaskList(List<T> taskList) {
+        for (T task : taskList) {
             System.out.println(task);
         }
         System.out.println();
     }
 
-    public static void showSubtaskList(List<Subtask> taskList) {
-        for(Subtask task : taskList) {
+    private static void printAllTasks(TaskManager manager) {
+        System.out.println("Задачи:");
+        for (Task task : manager.getTaskList()) {
             System.out.println(task);
         }
-        System.out.println();
+        System.out.println("Эпики:");
+        for (Task epic : manager.getEpicList()) {
+            System.out.println(epic);
+
+            for (Task task : manager.getEpicSubtasks(epic.getId())) {
+                System.out.println("--> " + task);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (Task subtask : manager.getSubtaskList()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
     }
 
-    public static void showEpicList(List<Epic> taskList) {
-        for(Epic task : taskList) {
-            System.out.println(task);
-        }
-        System.out.println();
-    }
+
 }

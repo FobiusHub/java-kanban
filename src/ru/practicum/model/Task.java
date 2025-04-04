@@ -2,7 +2,7 @@ package ru.practicum.model;
 
 import java.util.Objects;
 
-public class Task {
+public class Task implements Cloneable {
     protected int id;
     protected String name;
     protected String description;
@@ -75,4 +75,11 @@ public class Task {
         this.status = status;
     }
 
+    @Override
+    public Task clone() {
+        Task newTask = new Task(this.name, this.description);
+        newTask.setId(this.id);
+        newTask.setStatus(this.status);
+        return newTask;
+    }
 }

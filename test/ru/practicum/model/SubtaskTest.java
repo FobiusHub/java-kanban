@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
 
-    private static Epic epic;
-    private static Subtask subtask1;
-    private static Subtask subtask2;
+    private Epic epic;
+    private Subtask subtask1;
+    private Subtask subtask2;
 
     @BeforeEach
     public void createTasks(){

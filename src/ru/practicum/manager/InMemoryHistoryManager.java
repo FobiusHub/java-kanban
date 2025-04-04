@@ -11,19 +11,19 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        Task historyTask = new Task(task.getName(), task.getDescription());
+        if(task == null)
+            return;
+        Task historyTask = task.clone();
         historyTask.setId(task.getId());
 
-        if (history.size() < 10) {
-            history.add(historyTask);
-        } else {
+        if (history.size() >= 10)
             history.remove(0);
-            history.add(historyTask);
-        }
+        history.add(historyTask);
+
     }
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        return new ArrayList<>(history);
     }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Epic extends Task {
+public class Epic extends Task implements Cloneable {
     private final HashMap<Integer, Subtask> subtasks;
 
     public Epic(String name, String description) {
@@ -83,5 +83,14 @@ public class Epic extends Task {
             status = Status.DONE;
         else
             status = Status.IN_PROGRESS;
+    }
+
+    @Override
+    public Epic clone() {
+        Epic newEpic = new Epic(this.name, this.description);
+        for(Subtask subtask : this.subtasks.values()) {
+            newEpic.addSubtask(subtask);
+        }
+        return newEpic;
     }
 }

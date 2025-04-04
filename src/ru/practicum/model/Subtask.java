@@ -1,6 +1,6 @@
 package ru.practicum.model;
 
-public class Subtask extends Task {
+public class Subtask extends Task implements Cloneable {
     private final Epic epic;
 
     public Subtask(String name, String description, Epic epic) {
@@ -21,5 +21,11 @@ public class Subtask extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public Subtask clone() {
+        Subtask subtask = new Subtask(this.name, this.description, this.epic.clone());
+        return subtask;
     }
 }

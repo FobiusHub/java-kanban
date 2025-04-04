@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
 
-    private static Epic epic;
-    private static Subtask subtask;
+    private Epic epic;
+    private Subtask subtask;
 
     @BeforeEach
     public void createTasks(){

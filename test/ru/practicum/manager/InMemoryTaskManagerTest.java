@@ -8,13 +8,10 @@ import ru.practicum.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
-    private static TaskManager taskManager;
-    private static Task task;
-    private static Epic epic;
-    private static Subtask subtask;
-
-
-    //проверьте, что InMemoryTaskManager действительно добавляет задачи разного типа и может найти их по id;
+    private TaskManager taskManager;
+    private Task task;
+    private Epic epic;
+    private Subtask subtask;
 
     @BeforeEach
     public void createTaskManager() {
@@ -35,12 +32,12 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldAddEpic() {
-        Assertions.assertEquals(epic, taskManager.getEpic(0));
+        Assertions.assertEquals(epic, taskManager.getEpic(1));
     }
 
     @Test
     public void shouldAddSubtask() {
-        Assertions.assertEquals(subtask, taskManager.getSubtask(1));
+        Assertions.assertEquals(subtask, taskManager.getSubtask(2));
     }
 
     @Test

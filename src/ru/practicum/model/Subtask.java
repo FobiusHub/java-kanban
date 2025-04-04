@@ -25,7 +25,9 @@ public class Subtask extends Task implements Cloneable {
 
     @Override
     public Subtask clone() {
-        Subtask subtask = new Subtask(this.name, this.description, this.epic.clone());
-        return subtask;
+        Subtask newSubtask = new Subtask(this.name, this.description, this.epic.clone());
+        newSubtask.setStatus(this.status);
+        newSubtask.setId(this.id);
+        return newSubtask;
     }
 }

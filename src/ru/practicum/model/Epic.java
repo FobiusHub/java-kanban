@@ -88,6 +88,8 @@ public class Epic extends Task implements Cloneable {
     @Override
     public Epic clone() {
         Epic newEpic = new Epic(this.name, this.description);
+        newEpic.status = this.status;
+        newEpic.setId(this.id);
         for(Subtask subtask : this.subtasks.values()) {
             newEpic.addSubtask(subtask);
         }

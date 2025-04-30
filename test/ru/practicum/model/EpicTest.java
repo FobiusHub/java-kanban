@@ -12,7 +12,7 @@ class EpicTest {
     private Subtask subtask;
 
     @BeforeEach
-    public void createTasks(){
+    public void createTasks() {
         epic = new Epic("epic", "description");
         subtask = new Subtask("subtask", "description", epic);
         subtask.setId(0);
@@ -21,7 +21,7 @@ class EpicTest {
 
 
     @Test
-    public void epicShouldBeEqualIfEqualId(){
+    public void epicShouldBeEqualIfEqualId() {
         Epic epic1 = new Epic("task1", "description1");
         epic1.setId(1);
         Epic epic2 = new Epic("task2", "description2");
@@ -32,7 +32,7 @@ class EpicTest {
 
     @Test
     public void epicShouldBeNew() {
-       Assertions.assertEquals(Status.NEW, epic.getStatus());
+        Assertions.assertEquals(Status.NEW, epic.getStatus());
     }
 
     @Test
@@ -55,14 +55,14 @@ class EpicTest {
     }
 
     @Test
-    public void epicShouldCorrectlyRemoveSubtask(){
+    public void epicShouldCorrectlyRemoveSubtask() {
         epic.deleteSubtask(subtask);
         int epicSubtasksSize = epic.getEpicSubtasks().size();
         Assertions.assertEquals(0, epicSubtasksSize);
     }
 
     @Test
-    public void doneEpicShouldBeNewAfterRemoveOnlyOneSubtask(){
+    public void doneEpicShouldBeNewAfterRemoveOnlyOneSubtask() {
         subtask.setStatus(Status.DONE);
         epic.updateSubtask(subtask);
         epic.deleteSubtask(subtask);

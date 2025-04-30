@@ -13,7 +13,7 @@ class SubtaskTest {
     private Subtask subtask2;
 
     @BeforeEach
-    public void createTasks(){
+    public void createTasks() {
         epic = new Epic("epic", "description");
         subtask1 = new Subtask("task1", "description1", epic);
         subtask1.setId(1);
@@ -22,12 +22,12 @@ class SubtaskTest {
     }
 
     @Test
-    public void subtaskShouldBeEqualIfEqualId(){
+    public void subtaskShouldBeEqualIfEqualId() {
         Assertions.assertEquals(subtask1, subtask2);
     }
 
     @Test
-    public void subtaskShouldHaveEpic () {
+    public void subtaskShouldHaveEpic() {
         Assertions.assertNotNull(subtask1.getEpic());
     }
 

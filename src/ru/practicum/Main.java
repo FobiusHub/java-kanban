@@ -3,7 +3,6 @@ package ru.practicum;
 import ru.practicum.manager.Managers;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
-import ru.practicum.model.Status;
 import ru.practicum.model.Subtask;
 import ru.practicum.model.Task;
 
@@ -24,67 +23,51 @@ public class Main {
         taskManager.addSubtask(subtask1);
         Subtask subtask2 = new Subtask("Новые обои", "Поклеить новые обои", epic1);
         taskManager.addSubtask(subtask2);
+        Subtask subtask3 = new Subtask("Новые плинтус", "Установить новый плинтус", epic1);
+        taskManager.addSubtask(subtask3);
 
         Epic epic2 = new Epic("Чистая машина", "Помыть машину");
         taskManager.addEpic(epic2);
-        Subtask subtask3 = new Subtask("Мойка", "Отвезти машину на мойку", epic2);
-        taskManager.addSubtask(subtask3);
 
-        printAllTasks(taskManager);
-
+        System.out.println("История пустая, пока нет ни одного обращения к задачам");
+        System.out.println(taskManager.getHistory());
         System.out.println("_".repeat(100));
-        epic1.setStatus(Status.IN_PROGRESS);
 
-        task1.setStatus(Status.IN_PROGRESS);
-        taskManager.updateTask(task1);
-        task2.setStatus(Status.DONE);
-        taskManager.updateTask(task2);
+        System.out.println("Каждый запрос добавляется в историю: ");
+        taskManager.getTask(0);
+        taskManager.getTask(1);
+        taskManager.getEpic(epic1.getId());
+        taskManager.getSubtask(subtask1.getId());
+        taskManager.getSubtask(subtask2.getId());
+        taskManager.getSubtask(subtask3.getId());
+        taskManager.getEpic(epic2.getId());
+        showTaskList(taskManager.getHistory());
 
-        subtask1.setStatus(Status.IN_PROGRESS);
-        taskManager.updateSubtask(subtask1);
+        System.out.println("Запросы всех типов задач не дублируются в истории: ");
+        taskManager.getTask(0);
+        taskManager.getEpic(epic1.getId());
+        taskManager.getSubtask(subtask1.getId());
+        showTaskList(taskManager.getHistory());
 
-        subtask3.setStatus(Status.DONE);
-        taskManager.updateSubtask(subtask3);
+        System.out.println("Последняя просмотренная задача будет последней: ");
+        taskManager.getTask(0);
+        showTaskList(taskManager.getHistory());
 
+        System.out.println("Последняя удаления задачи она пропадет и из истории: ");
+        taskManager.deleteTask(0);
+        showTaskList(taskManager.getHistory());
+
+        System.out.println("Последняя удаления эпика он пропадет из истории вместе со своими подзадачами: ");
         taskManager.deleteEpic(epic1.getId());
-
-        System.out.println("_".repeat(100));
-
-        taskManager.getEpic(5);
-
-        printAllTasks(taskManager);
+        showTaskList(taskManager.getHistory());
     }
 
     public static <T extends Task> void showTaskList(List<T> taskList) {
         for (T task : taskList) {
             System.out.println(task);
         }
+        System.out.println("_".repeat(100));
         System.out.println();
     }
-
-    private static void printAllTasks(TaskManager manager) {
-        System.out.println("Задачи:");
-        for (Task task : manager.getTaskList()) {
-            System.out.println(task);
-        }
-        System.out.println("Эпики:");
-        for (Task epic : manager.getEpicList()) {
-            System.out.println(epic);
-
-            for (Task task : manager.getEpicSubtasks(epic.getId())) {
-                System.out.println("--> " + task);
-            }
-        }
-        System.out.println("Подзадачи:");
-        for (Task subtask : manager.getSubtaskList()) {
-            System.out.println(subtask);
-        }
-
-        System.out.println("История:");
-        for (Task task : manager.getHistory()) {
-            System.out.println(task);
-        }
-    }
-
 
 }

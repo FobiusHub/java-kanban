@@ -16,12 +16,15 @@ public class Task implements Cloneable {
 
     @Override
     public boolean equals(Object object) {
-        if (this == object)
+        if (this == object) {
             return true;
-        if (object == null)
+        }
+        if (object == null) {
             return false;
-        if (this.getClass() != object.getClass())
+        }
+        if (this.getClass() != object.getClass()) {
             return false;
+        }
 
         Task otherTask = (Task) object;
 

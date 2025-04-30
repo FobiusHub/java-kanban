@@ -42,11 +42,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearEpics() {
-        clearSubtasks();
+        for (Integer id : subtasks.keySet()) {
+            historyManager.remove(id);
+        }
         for (Integer id : epics.keySet()) {
             historyManager.remove(id);
         }
         epics.clear();
+        subtasks.clear();
     }
 
     @Override
@@ -64,24 +67,27 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTask(int id) {
         Task task = tasks.get(id).clone();
-        if (task != null)
+        if (task != null) {
             historyManager.add(task);
+        }
         return task;
     }
 
     @Override
     public Epic getEpic(int id) {
         Epic epic = epics.get(id).clone();
-        if (epic != null)
+        if (epic != null) {
             historyManager.add(epic);
+        }
         return epic;
     }
 
     @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = subtasks.get(id).clone();
-        if (subtask != null)
+        if (subtask != null) {
             historyManager.add(subtask);
+        }
         return subtask;
     }
 
@@ -103,8 +109,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int addSubtask(Subtask subtask) {
         Epic subtaskEpic = subtask.getEpic();
-        if (subtaskEpic == null || !epics.containsKey(subtaskEpic.getId()))
+        if (subtaskEpic == null || !epics.containsKey(subtaskEpic.getId())) {
             return -1;
+        }
         subtask.setId(id);
         subtasks.put(id, subtask);
         subtaskEpic.addSubtask(subtask);
@@ -115,8 +122,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         int key = task.getId();
-        if (tasks.containsKey(key))
+        if (tasks.containsKey(key)) {
             tasks.put(key, task);
+        }
     }
 
     @Override
@@ -173,8 +181,9 @@ public class InMemoryTaskManager implements TaskManager {
     //Получение списка всех подзадач определённого эпика.
     @Override
     public List<Subtask> getEpicSubtasks(int id) {
-        if (!epics.containsKey(id))
+        if (!epics.containsKey(id)) {
             return null;
+        }
         return epics.get(id).getEpicSubtasks();
     }
 

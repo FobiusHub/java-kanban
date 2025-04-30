@@ -71,18 +71,21 @@ public class Epic extends Task implements Cloneable {
                 status = Status.IN_PROGRESS;
                 return;
             }
-            if (subtask.status != Status.DONE)
+            if (subtask.status != Status.DONE) {
                 isDone = false;
-            if (subtask.status != Status.NEW)
+            }
+            if (subtask.status != Status.NEW) {
                 isNew = false;
+            }
         }
 
-        if (isNew)
+        if (isNew) {
             status = Status.NEW;
-        else if (isDone)
+        } else if (isDone) {
             status = Status.DONE;
-        else
+        } else {
             status = Status.IN_PROGRESS;
+        }
     }
 
     @Override

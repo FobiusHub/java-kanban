@@ -85,4 +85,11 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals("name", taskManager.getSubtask(2).getName());
     }
 
+    @Test
+    public void removedTaskWillBeRemoveFromHistory() {
+        taskManager.deleteTask(task.getId());
+        taskManager.deleteEpic(epic.getId());
+        Assertions.assertEquals(0, taskManager.getHistory().size());
+    }
+
 }

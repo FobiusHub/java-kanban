@@ -18,14 +18,14 @@ public class Epic extends Task implements Cloneable {
     }
 
     public void addSubtask(Subtask subtask) {
-        if(subtask != null) {
+        if (subtask != null) {
             subtasks.put(subtask.getId(), subtask);
             updateStatus();
         }
     }
 
-    public void deleteSubtask(Subtask subtask){
-        if(subtask != null && subtasks.containsKey(subtask.getId())) {
+    public void deleteSubtask(Subtask subtask) {
+        if (subtask != null && subtasks.containsKey(subtask.getId())) {
             subtasks.remove(subtask.getId());
             updateStatus();
         }
@@ -37,7 +37,7 @@ public class Epic extends Task implements Cloneable {
     }
 
     public void updateSubtask(Subtask subtask) {
-        if(subtask != null && subtasks.containsKey(subtask.getId())) {
+        if (subtask != null && subtasks.containsKey(subtask.getId())) {
             subtasks.put(subtask.id, subtask);
             updateStatus();
         }
@@ -90,7 +90,7 @@ public class Epic extends Task implements Cloneable {
         Epic newEpic = new Epic(this.name, this.description);
         newEpic.status = this.status;
         newEpic.setId(this.id);
-        for(Subtask subtask : this.subtasks.values()) {
+        for (Subtask subtask : this.subtasks.values()) {
             newEpic.addSubtask(subtask);
         }
         return newEpic;

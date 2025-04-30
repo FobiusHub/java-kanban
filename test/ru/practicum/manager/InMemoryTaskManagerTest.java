@@ -47,21 +47,42 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldRemoveEpicsSubtaskAfterClearSubtasks(){
+    public void shouldRemoveEpicsSubtaskAfterClearSubtasks() {
         taskManager.clearSubtasks();
         Assertions.assertEquals(0, epic.getEpicSubtasks().size());
     }
 
     @Test
-    public void subtasksShouldBeRemovedIfRemoveEpic(){
+    public void subtasksShouldBeRemovedIfRemoveEpic() {
         taskManager.deleteEpic(epic.getId());
         Assertions.assertEquals(0, taskManager.getSubtaskList().size());
     }
 
     @Test
-    public void epicsSubtaskShouldBeRemovedIfItsRemovedInSubtasks(){
+    public void epicsSubtaskShouldBeRemovedIfItsRemovedInSubtasks() {
         taskManager.deleteSubtask(subtask.getId());
         Assertions.assertEquals(0, epic.getEpicSubtasks().size());
+    }
+
+    @Test
+    public void ifUpdateTaskNotCallTaskShouldNotChanges() {
+        Task testTask = taskManager.getTask(0);
+        testTask.setName("testName");
+        Assertions.assertEquals("name", taskManager.getTask(0).getName());
+    }
+
+    @Test
+    public void ifUpdateEpicNotCallEpicShouldNotChanges() {
+        Epic testEpic = taskManager.getEpic(1);
+        testEpic.setName("testName");
+        Assertions.assertEquals("name", taskManager.getEpic(1).getName());
+    }
+
+    @Test
+    public void ifUpdateSubtaskNotCallSubtaskShouldNotChanges() {
+        Subtask testSubtask = taskManager.getSubtask(2);
+        testSubtask.setName("testName");
+        Assertions.assertEquals("name", taskManager.getSubtask(2).getName());
     }
 
 }

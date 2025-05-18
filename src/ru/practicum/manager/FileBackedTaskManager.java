@@ -1,5 +1,6 @@
 package ru.practicum.manager;
 
+import ru.practicum.exceptions.ManagerLoadException;
 import ru.practicum.exceptions.ManagerSaveException;
 import ru.practicum.model.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
+    private static final String HEADER = "id,type,name,status,description,epic";
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -91,10 +93,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         save();
     }
 
-    private void save() throws ManagerSaveException {
+    private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath(),
                 StandardCharsets.UTF_8, false))) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write(HEADER + "\n");
             List<Task> allTasks = new ArrayList<>(getTaskList());
             allTasks.addAll(getEpicList());
             allTasks.addAll(getSubtaskList());
@@ -107,7 +109,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    public String toString(Task task) {
+    private String toString(Task task) {
         String result = task.getId() + "," + task.getType() + ","
                 + task.getName() + "," + task.getStatus() + ","
                 + task.getDescription() + ",";
@@ -140,7 +142,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             result.id++;
             return result;
         } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка чтения файла");
+            throw new ManagerLoadException("Ошибка чтения файла");
         }
     }
 

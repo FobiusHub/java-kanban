@@ -57,28 +57,34 @@ public class FileBackedTaskManagerTest {
         Assertions.assertEquals(0, testLoadManager.getSubtaskList().size());
     }
 
-    //сохранение нескольких задач
-    @Test
-    public void shouldSaveTasks() {
-        File file = fileBackedTaskManager.getFile();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            //пропускаем заголовок
-            reader.readLine();
-            Assertions.assertEquals(fileBackedTaskManager.toString(task), reader.readLine());
-            Assertions.assertEquals(fileBackedTaskManager.toString(epic), reader.readLine());
-            Assertions.assertEquals(fileBackedTaskManager.toString(subtask), reader.readLine());
-        } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка чтения файла");
-        }
-    }
-
     //загрузку нескольких задач
     @Test
     public void shouldCorrectlyLoadTasks() {
         FileBackedTaskManager newManager = FileBackedTaskManager.loadFromFile(fileBackedTaskManager.getFile());
-        Assertions.assertEquals(task, newManager.getTask(0));
-        Assertions.assertEquals(epic, newManager.getEpic(1));
-        Assertions.assertEquals(subtask, newManager.getSubtask(2));
+
+        Task newManagerTask = newManager.getTask(0);
+        Assertions.assertEquals(task.getId(), newManagerTask.getId());
+        Assertions.assertEquals(task.getName(), newManagerTask.getName());
+        Assertions.assertEquals(task.getDescription(), newManagerTask.getDescription());
+        Assertions.assertEquals(task.getType(), newManagerTask.getType());
+        Assertions.assertEquals(task.getStatus(), newManagerTask.getStatus());
+
+        Epic newManagerEpic = newManager.getEpic(1);
+        Assertions.assertEquals(epic.getId(), newManagerEpic.getId());
+        Assertions.assertEquals(epic.getName(), newManagerEpic.getName());
+        Assertions.assertEquals(epic.getDescription(), newManagerEpic.getDescription());
+        Assertions.assertEquals(epic.getType(), newManagerEpic.getType());
+        Assertions.assertEquals(epic.getStatus(), newManagerEpic.getStatus());
+        Assertions.assertEquals(epic.getEpicSubtasks().getFirst(), newManagerEpic.getEpicSubtasks().getFirst());
+
+        Subtask newManagerSubtask = newManager.getSubtask(2);
+        Assertions.assertEquals(subtask.getId(), newManagerSubtask.getId());
+        Assertions.assertEquals(subtask.getName(), newManagerSubtask.getName());
+        Assertions.assertEquals(subtask.getDescription(), newManagerSubtask.getDescription());
+        Assertions.assertEquals(subtask.getType(), newManagerSubtask.getType());
+        Assertions.assertEquals(subtask.getStatus(), newManagerSubtask.getStatus());
+        Assertions.assertEquals(subtask.getEpic().getId(), newManagerSubtask.getEpic().getId());
+
         //проверим, что после загрузки файла правильно меняется счетчик id
         newManager.addTask(new Task("testIdTask", "testIdDescription"));
         Assertions.assertEquals("testIdTask", newManager.getTask(3).getName());

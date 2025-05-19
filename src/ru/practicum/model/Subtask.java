@@ -6,6 +6,7 @@ public class Subtask extends Task implements Cloneable {
     public Subtask(String name, String description, Epic epic) {
         super(name, description);
         this.epic = epic;
+        type = TaskType.SUBTASK;
     }
 
     public Epic getEpic() {

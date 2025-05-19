@@ -7,11 +7,13 @@ public class Task implements Cloneable {
     protected String name;
     protected String description;
     protected Status status;
+    protected TaskType type;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+        type = TaskType.TASK;
     }
 
     @Override
@@ -84,5 +86,9 @@ public class Task implements Cloneable {
         newTask.setId(this.id);
         newTask.setStatus(this.status);
         return newTask;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 }

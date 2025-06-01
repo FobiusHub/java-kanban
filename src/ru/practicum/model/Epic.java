@@ -65,6 +65,7 @@ public class Epic extends Task implements Cloneable {
                 ", status=" + status +
                 ", startTime='" + startTime + '\'' +
                 ", duration='" + duration + '\'' +
+                ", endTime='" + endTime + '\'' +
                 '}';
     }
 

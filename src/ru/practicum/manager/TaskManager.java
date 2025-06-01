@@ -56,8 +56,4 @@ public interface TaskManager {
     List<Task> getHistory();
 
     List<Task> getPrioritizedTasks();
-
-    boolean isIntersect(Task task1, Task task2);
-
-    boolean isIntersectWithAny(Task task);
 }

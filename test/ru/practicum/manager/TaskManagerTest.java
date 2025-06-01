@@ -2,6 +2,7 @@ package ru.practicum.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.practicum.exceptions.AddTaskException;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Subtask;
 import ru.practicum.model.Task;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 abstract class TaskManagerTest<T extends TaskManager> {
-    protected TaskManager taskManager;
+    protected T taskManager;
     protected Task task;
     protected Epic epic;
     protected Subtask subtask;
@@ -115,36 +116,16 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void isIntersectWorkCorrectly() {
-        //метод возвращает true, если есть пересечение
+        //Если добавляемая задача пересекается с существующей, должно быть выброшено исключение
         Task task1 = new Task("name1", "description1");
         task1.setStartTime(LocalDateTime.of(2000, 1, 1, 13, 0));
         task1.setDuration(120);
-        assertTrue(taskManager.isIntersect(task, task1));
-        assertTrue(taskManager.isIntersect(task1, task));
-        //метод возвращает false, если пересечения нет
-        assertFalse(taskManager.isIntersect(subtask, task));
-        assertFalse(taskManager.isIntersect(task, subtask));
-        //метод возвращает false, если startTime == null
+        assertThrows(AddTaskException.class, () -> taskManager.addTask(task1));
+        //Если пересечения нет, исключения быть не должно
+        task1.setStartTime(LocalDateTime.of(2001, 1, 1, 13, 0));
+        assertDoesNotThrow(() -> taskManager.addTask(task1));
+        //Исключения быть не должно, если startTime == null
         Task task2 = new Task("name2", "description2");
-        assertFalse(taskManager.isIntersect(task2, task));
-        assertFalse(taskManager.isIntersect(task, task2));
-        //метод возвращает false, если одна из переданных task == null
-        Task task3 = null;
-        assertFalse(taskManager.isIntersect(task3, task));
-        assertFalse(taskManager.isIntersect(task, task3));
-    }
-
-    @Test
-    public void isIntersectWithAnyReturnTrueIfTasksIntersect() {
-        Task task1 = new Task("name1", "description1");
-        task1.setStartTime(LocalDateTime.of(2000, 1, 1, 13, 0));
-        task1.setDuration(120);
-        assertTrue(taskManager.isIntersectWithAny(task1));
-    }
-
-    @Test
-    public void isIntersectWithAnyReturnFalseIfTasksDontIntersect() {
-        Task task2 = new Task("name2", "description2");
-        assertFalse(taskManager.isIntersectWithAny(task2));
+        assertDoesNotThrow(() -> taskManager.addTask(task2));
     }
 }

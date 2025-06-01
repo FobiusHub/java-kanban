@@ -61,6 +61,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         assertEquals(task.getStatus(), newManagerTask.getStatus());
         assertEquals(task.getStartTime(), newManagerTask.getStartTime());
         assertEquals(task.getDuration(), newManagerTask.getDuration());
+        assertTrue(newManager.prioritizedTasks.contains(task));
 
         Epic newManagerEpic = newManager.getEpic(1).get();
         assertEquals(epic.getId(), newManagerEpic.getId());
@@ -71,6 +72,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         assertEquals(epic.getEpicSubtasks().getFirst(), newManagerEpic.getEpicSubtasks().getFirst());
         assertEquals(epic.getStartTime(), newManagerEpic.getStartTime());
         assertEquals(epic.getDuration(), newManagerEpic.getDuration());
+        assertEquals(epic.getEndTime(), newManagerEpic.getEndTime());
 
         Subtask newManagerSubtask = newManager.getSubtask(2).get();
         assertEquals(subtask.getId(), newManagerSubtask.getId());
@@ -81,6 +83,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         assertEquals(subtask.getEpic().getId(), newManagerSubtask.getEpic().getId());
         assertEquals(subtask.getStartTime(), newManagerSubtask.getStartTime());
         assertEquals(subtask.getDuration(), newManagerSubtask.getDuration());
+        assertTrue(newManager.prioritizedTasks.contains(subtask));
 
         //проверим, правильно ли выгружается Epic с пустыми полями duration и startTime
         Epic newManagerEpic2 = newManager.getEpic(3).get();

@@ -1,6 +1,5 @@
 package ru.practicum.model;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,12 +22,12 @@ class SubtaskTest {
 
     @Test
     public void subtaskShouldBeEqualIfEqualId() {
-        Assertions.assertEquals(subtask1, subtask2);
+        assertEquals(subtask1, subtask2);
     }
 
     @Test
     public void subtaskShouldHaveEpic() {
-        Assertions.assertNotNull(subtask1.getEpic());
+        assertNotNull(subtask1.getEpic());
     }
 
 }

@@ -5,6 +5,7 @@ import ru.practicum.model.Subtask;
 import ru.practicum.model.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskManager {
     //Получение списка всех задач.
@@ -22,11 +23,11 @@ public interface TaskManager {
     void clearSubtasks();
 
     //Получение по идентификатору.
-    Task getTask(int id);
+    Optional<Task> getTask(int id);
 
-    Epic getEpic(int id);
+    Optional<Epic> getEpic(int id);
 
-    Subtask getSubtask(int id);
+    Optional<Subtask> getSubtask(int id);
 
     //Создание. Сам объект должен передаваться в качестве параметра.
     int addTask(Task task);
@@ -53,4 +54,10 @@ public interface TaskManager {
     List<Subtask> getEpicSubtasks(int id);
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    boolean isIntersect(Task task1, Task task2);
+
+    boolean isIntersectWithAny(Task task);
 }

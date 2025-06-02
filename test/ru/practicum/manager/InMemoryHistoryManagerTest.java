@@ -1,12 +1,13 @@
 package ru.practicum.manager;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Status;
 import ru.practicum.model.Subtask;
 import ru.practicum.model.Task;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
 
@@ -41,10 +42,10 @@ class InMemoryHistoryManagerTest {
 
         Task oldTask = historyManager.getHistory().get(0);
 
-        Assertions.assertEquals(0, oldTask.getId());
-        Assertions.assertEquals("name", oldTask.getName());
-        Assertions.assertEquals("description", oldTask.getDescription());
-        Assertions.assertEquals(Status.NEW, oldTask.getStatus());
+        assertEquals(0, oldTask.getId());
+        assertEquals("name", oldTask.getName());
+        assertEquals("description", oldTask.getDescription());
+        assertEquals(Status.NEW, oldTask.getStatus());
     }
 
     @Test
@@ -61,35 +62,63 @@ class InMemoryHistoryManagerTest {
         Epic oldEpic = (Epic) historyManager.getHistory().get(1);
         Subtask oldSubtask = (Subtask) historyManager.getHistory().get(2);
 
-        Assertions.assertEquals(2, oldSubtask.getId());
-        Assertions.assertEquals("name", oldSubtask.getName());
-        Assertions.assertEquals("description", oldSubtask.getDescription());
-        Assertions.assertEquals(Status.NEW, oldSubtask.getStatus());
-        Assertions.assertEquals(Status.NEW, oldEpic.getStatus());
-        Assertions.assertEquals(1, oldEpic.getId());
-        Assertions.assertEquals("epicName", oldEpic.getName());
-        Assertions.assertEquals("epicDescription", oldEpic.getDescription());
-        Assertions.assertEquals(1, oldEpic.getEpicSubtasks().size());
+        assertEquals(2, oldSubtask.getId());
+        assertEquals("name", oldSubtask.getName());
+        assertEquals("description", oldSubtask.getDescription());
+        assertEquals(Status.NEW, oldSubtask.getStatus());
+        assertEquals(Status.NEW, oldEpic.getStatus());
+        assertEquals(1, oldEpic.getId());
+        assertEquals("epicName", oldEpic.getName());
+        assertEquals("epicDescription", oldEpic.getDescription());
+        assertEquals(1, oldEpic.getEpicSubtasks().size());
     }
 
     @Test
     public void newTaskInHistoryManagerShouldBeLast() {
-        Assertions.assertEquals(subtask, historyManager.getHistory().getLast());
+        assertEquals(subtask, historyManager.getHistory().getLast());
     }
 
     @Test
     public void shouldBeNoDuplicatesInHistory() {
         historyManager.add(task);
         historyManager.add(task);
-        Assertions.assertEquals(3, historyManager.getHistory().size());
+        assertEquals(3, historyManager.getHistory().size());
     }
 
     @Test
     public void removeShouldWorkCorrectly() {
         historyManager.remove(1);
-        Assertions.assertEquals(task, historyManager.getHistory().get(0));
-        Assertions.assertEquals(subtask, historyManager.getHistory().get(1));
-        Assertions.assertEquals(2, historyManager.getHistory().size());
+        assertEquals(task, historyManager.getHistory().get(0));
+        assertEquals(subtask, historyManager.getHistory().get(1));
+        assertEquals(2, historyManager.getHistory().size());
+    }
+
+    @Test
+    public void ifGetAnyTaskNotCallHistoryShouldBeEmpty() {
+        HistoryManager otherHistoryManager = new InMemoryHistoryManager();
+        Task newTask = new Task("newTaskName", "newTaskDescription");
+        assertTrue(otherHistoryManager.getHistory().isEmpty());
+    }
+
+    @Test
+    public void shouldCorrectlyRemoveFirstTaskInHistory() {
+        historyManager.remove(0);
+        assertEquals(epic, historyManager.getHistory().getFirst());
+        assertEquals(subtask, historyManager.getHistory().getLast());
+    }
+
+    @Test
+    public void shouldCorrectlyRemoveMiddleTaskInHistory() {
+        historyManager.remove(1);
+        assertEquals(task, historyManager.getHistory().getFirst());
+        assertEquals(subtask, historyManager.getHistory().getLast());
+    }
+
+    @Test
+    public void shouldCorrectlyRemoveLastTaskInHistory() {
+        historyManager.remove(2);
+        assertEquals(task, historyManager.getHistory().getFirst());
+        assertEquals(epic, historyManager.getHistory().getLast());
     }
 
 }

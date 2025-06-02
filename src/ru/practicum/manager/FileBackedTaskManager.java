@@ -6,12 +6,13 @@ import ru.practicum.model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final File file;
-    private static final String HEADER = "id,type,name,status,description,epic";
+    private static final String HEADER = "id,type,name,status,description,startTime,duration,epic";
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -97,6 +98,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath(),
                 StandardCharsets.UTF_8, false))) {
             writer.write(HEADER + "\n");
+
             List<Task> allTasks = new ArrayList<>(getTaskList());
             allTasks.addAll(getEpicList());
             allTasks.addAll(getSubtaskList());
@@ -112,7 +114,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     private String toString(Task task) {
         String result = task.getId() + "," + task.getType() + ","
                 + task.getName() + "," + task.getStatus() + ","
-                + task.getDescription() + ",";
+                + task.getDescription() + "," + task.getStartTime() + ","
+                + task.getDuration() + ",";
         if (task instanceof Subtask) {
             result += ((Subtask) task).getEpic().getId();
         }
@@ -132,8 +135,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                     result.subtasks.put(task.getId(), (Subtask) task);
                     Epic epic = result.epics.get(((Subtask) task).getEpic().getId());
                     epic.addSubtask((Subtask) task);
+                    result.prioritizedTasks.add(task);
                 } else {
                     result.tasks.put(task.getId(), task);
+                    result.prioritizedTasks.add(task);
                 }
                 if (task.getId() > result.id) {
                     result.id = task.getId();
@@ -154,16 +159,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 task = new Task(taskParameters[2], taskParameters[4]);
                 task.setId(Integer.parseInt(taskParameters[0]));
                 task.setStatus(Status.valueOf(taskParameters[3]));
+                if (!(taskParameters[5].equals("null"))) {
+                    task.setStartTime(LocalDateTime.parse(taskParameters[5]));
+                }
+                task.setDuration(Long.parseLong(taskParameters[6]));
                 break;
             case "EPIC":
                 task = new Epic(taskParameters[2], taskParameters[4]);
                 task.setId(Integer.parseInt(taskParameters[0]));
                 break;
             default:
-                Epic epic = epics.get(Integer.parseInt(taskParameters[5]));
+                Epic epic = epics.get(Integer.parseInt(taskParameters[7]));
                 task = new Subtask(taskParameters[2], taskParameters[4], epic);
                 task.setId(Integer.parseInt(taskParameters[0]));
                 task.setStatus(Status.valueOf(taskParameters[3]));
+                if (!(taskParameters[5].equals("null"))) {
+                    task.setStartTime(LocalDateTime.parse(taskParameters[5]));
+                }
+                task.setDuration(Long.parseLong(taskParameters[6]));
         }
         return task;
     }
@@ -178,20 +191,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         FileBackedTaskManager manager = new FileBackedTaskManager(firstManagerTasks);
 
         Task task1 = new Task("Турка", "Помыть турку");
+        task1.setStartTime(LocalDateTime.of(2025, 1, 1, 8, 0));
+        task1.setDuration(20);
         manager.addTask(task1);
         Task task2 = new Task("Кофе", "Сварить кофе");
+        task2.setStartTime(LocalDateTime.of(2025, 1, 1, 8, 20));
+        task2.setDuration(10);
         manager.addTask(task2);
 
         Epic epic1 = new Epic("Ремонт", "Сделать ремонт в комнате");
         manager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Старые обои", "Удалить старые обои", epic1);
+        subtask1.setStartTime(LocalDateTime.of(2025, 2, 1, 8, 0));
+        subtask1.setDuration(240);
         manager.addSubtask(subtask1);
         Subtask subtask2 = new Subtask("Новые обои", "Поклеить новые обои", epic1);
+        subtask2.setStartTime(LocalDateTime.of(2025, 2, 3, 8, 0));
+        subtask2.setDuration(240);
         manager.addSubtask(subtask2);
 
         Epic epic2 = new Epic("Чистая машина", "Помыть машину");
         manager.addEpic(epic2);
         Subtask subtask3 = new Subtask("запись", "записаться на мойку", epic2);
+        subtask3.setStartTime(LocalDateTime.of(2025, 2, 4, 8, 0));
+        subtask3.setDuration(240);
         manager.addSubtask(subtask3);
         subtask3.setStatus(Status.DONE);
         manager.updateSubtask(subtask3);
@@ -215,5 +238,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         System.out.println("Subtask-и нового менеджера: ");
         System.out.println(newManager.getSubtaskList());
         System.out.println();
+
+        System.out.println("Задачи в порядке приоритета: ");
+        manager.getPrioritizedTasks().forEach(System.out::println);
     }
 }

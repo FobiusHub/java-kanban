@@ -1,13 +1,17 @@
 package ru.practicum.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Cloneable {
-    protected int id;
+    protected int id = -1; //id не присвоен
     protected String name;
     protected String description;
     protected Status status;
     protected TaskType type;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
     public Task(String name, String description) {
         this.name = name;
@@ -44,7 +48,9 @@ public class Task implements Cloneable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status=" + status +
+                ", status=" + status + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", duration='" + duration + '\'' +
                 '}';
     }
 
@@ -85,10 +91,35 @@ public class Task implements Cloneable {
         Task newTask = new Task(this.name, this.description);
         newTask.setId(this.id);
         newTask.setStatus(this.status);
+        newTask.setDuration(this.getDuration());
+        newTask.setStartTime(this.getStartTime());
         return newTask;
     }
 
     public TaskType getType() {
         return type;
+    }
+
+    public long getDuration() {
+        if (duration == null) {
+            return 0;
+        }
+        return duration.toMinutes();
+    }
+
+    public void setDuration(long minutes) {
+        duration = Duration.ofMinutes(minutes);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime newStartTime) {
+        startTime = newStartTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return duration == null ? startTime : startTime.plus(duration);
     }
 }

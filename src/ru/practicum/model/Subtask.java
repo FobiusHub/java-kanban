@@ -21,6 +21,8 @@ public class Subtask extends Task implements Cloneable {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", startTime='" + startTime + '\'' +
+                ", duration='" + duration + '\'' +
                 '}';
     }
 
@@ -29,6 +31,8 @@ public class Subtask extends Task implements Cloneable {
         Subtask newSubtask = new Subtask(this.name, this.description, this.epic.clone());
         newSubtask.setStatus(this.status);
         newSubtask.setId(this.id);
+        newSubtask.setDuration(this.getDuration());
+        newSubtask.setStartTime(this.getStartTime());
         return newSubtask;
     }
 }

@@ -63,12 +63,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldRemoveEpicsSubtaskAfterClearSubtasks() {
         taskManager.clearSubtasks();
         assertEquals(0, epic.getEpicSubtasks().size());
+        assertFalse(taskManager.getPrioritizedTasks().contains(subtask));
     }
 
     @Test
     public void subtasksShouldBeRemovedIfRemoveEpic() {
         taskManager.deleteEpic(epic.getId());
         assertEquals(0, taskManager.getSubtaskList().size());
+        assertFalse(taskManager.getPrioritizedTasks().contains(subtask));
     }
 
     @Test

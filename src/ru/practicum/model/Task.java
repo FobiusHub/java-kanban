@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Cloneable {
-    protected int id = -1; //id не присвоен
+    protected int id;
     protected String name;
     protected String description;
     protected Status status;
@@ -13,11 +13,16 @@ public class Task implements Cloneable {
     protected LocalDateTime startTime;
     protected Duration duration;
 
+    protected Task() {
+        id = -1;
+        status = Status.NEW;
+        type = TaskType.TASK;
+    }
+
     public Task(String name, String description) {
+        this();
         this.name = name;
         this.description = description;
-        this.status = Status.NEW;
-        type = TaskType.TASK;
     }
 
     @Override
@@ -54,7 +59,7 @@ public class Task implements Cloneable {
                 '}';
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

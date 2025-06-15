@@ -61,29 +61,35 @@ public class InMemoryTaskManager implements TaskManager {
     //Получение по идентификатору.
     @Override
     public Optional<Task> getTask(int id) {
-        Task task = tasks.get(id).clone();
-        if (task != null) {
+        if (tasks.containsKey(id)) {
+            Task task = tasks.get(id).clone();
             historyManager.add(task);
+            return Optional.of(task);
+        } else {
+            return Optional.empty();
         }
-        return Optional.of(task);
     }
 
     @Override
     public Optional<Epic> getEpic(int id) {
-        Epic epic = epics.get(id).clone();
-        if (epic != null) {
+        if (epics.containsKey(id)) {
+            Epic epic = epics.get(id).clone();
             historyManager.add(epic);
+            return Optional.of(epic);
+        } else {
+            return Optional.empty();
         }
-        return Optional.of(epic);
     }
 
     @Override
     public Optional<Subtask> getSubtask(int id) {
-        Subtask subtask = subtasks.get(id).clone();
-        if (subtask != null) {
+        if (subtasks.containsKey(id)) {
+            Subtask subtask = subtasks.get(id).clone();
             historyManager.add(subtask);
+            return Optional.of(subtask);
+        } else {
+            return Optional.empty();
         }
-        return Optional.of(subtask);
     }
 
     //Создание. Сам объект должен передаваться в качестве параметра.

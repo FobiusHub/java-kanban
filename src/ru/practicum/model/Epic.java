@@ -11,10 +11,18 @@ public class Epic extends Task implements Cloneable {
     private final HashMap<Integer, Subtask> subtasks;
     private LocalDateTime endTime;
 
-    public Epic(String name, String description) {
-        super(name, description);
-        subtasks = new HashMap<>();
+    private Epic() {
+        id = -1;
+        status = Status.NEW;
         type = TaskType.EPIC;
+        subtasks = new HashMap<>();
+
+    }
+
+    public Epic(String name, String description) {
+        this();
+        this.name = name;
+        this.description = description;
     }
 
     public List<Subtask> getEpicSubtasks() {

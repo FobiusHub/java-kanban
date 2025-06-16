@@ -1,8 +1,7 @@
-package ru.practicum.server;
+package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Subtask;
@@ -12,9 +11,9 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
+public class EpicsHandler extends BaseHttpHandler {
 
-    EpicsHandler(TaskManager taskManager, Gson gson) {
+    public EpicsHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 

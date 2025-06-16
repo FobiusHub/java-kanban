@@ -1,7 +1,8 @@
-package ru.practicum.server;
+package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.exceptions.AddTaskException;
 import ru.practicum.exceptions.UpdateTaskException;
 import ru.practicum.manager.TaskManager;
@@ -15,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
-class BaseHttpHandler {
+abstract class BaseHttpHandler implements HttpHandler {
     protected final Gson gson;
     protected TaskManager taskManager;
 
@@ -49,6 +50,15 @@ class BaseHttpHandler {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8");
         exchange.sendResponseHeaders(406, resp.length);
+        exchange.getResponseBody().write(resp);
+        exchange.close();
+    }
+
+    //Для отправки информации об ошибке
+    protected void sendError(HttpExchange exchange, int rCode, String text) throws IOException {
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().add("Content-Type", "text/plain; charset=utf-8");
+        exchange.sendResponseHeaders(rCode, resp.length);
         exchange.getResponseBody().write(resp);
         exchange.close();
     }
@@ -95,10 +105,13 @@ class BaseHttpHandler {
         }
     }
 
-
     protected <T extends Task> void post(HttpExchange exchange, Class<T> taskClass) throws IOException {
         try {
             T task = fromJsonToTask(exchange, taskClass);
+            if (task == null) {
+                sendError(exchange, 400, "Некорректный запрос: пустое тело запроса");
+                return;
+            }
             int id = task.getId();
             Optional<? extends Task> optTask;
             if (taskClass == Task.class) {

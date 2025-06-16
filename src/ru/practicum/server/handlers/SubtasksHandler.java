@@ -1,17 +1,16 @@
-package ru.practicum.server;
+package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Subtask;
 
 import java.io.IOException;
 import java.net.URI;
 
-public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
+public class SubtasksHandler extends BaseHttpHandler {
 
-    SubtasksHandler(TaskManager taskManager, Gson gson) {
+    public SubtasksHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 

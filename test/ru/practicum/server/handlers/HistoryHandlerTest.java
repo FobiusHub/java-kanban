@@ -1,13 +1,12 @@
-package ru.practicum.server;
+package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.practicum.manager.InMemoryTaskManager;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Subtask;
+import ru.practicum.server.HttpTaskServer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PrioritizedHandlerTest {
+public class HistoryHandlerTest {
     private TaskManager manager;
     private HttpTaskServer server;
     private Gson gson;
@@ -32,13 +31,14 @@ public class PrioritizedHandlerTest {
     }
 
     @Test
-    public void prioritizedGetShouldReturnValidListWithCorrectFields() throws IOException, InterruptedException {
+    public void historyGetShouldReturnValidListWithCorrectFields() throws IOException, InterruptedException {
         initializeTasks(manager);
-        String jsonTasksList = gson.toJson(manager.getPrioritizedTasks());
-
+        String jsonTasksList = gson.toJson(manager.getSubtaskList());
+        manager.getSubtask(1);
+        manager.getSubtask(2);
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/prioritized");
+        URI url = URI.create("http://localhost:8080/history");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
@@ -49,10 +49,10 @@ public class PrioritizedHandlerTest {
     }
 
     @Test
-    public void prioritizedGetWithIncorrectPathShouldReturn404() throws IOException, InterruptedException {
+    public void historyGetWithIncorrectPathShouldReturn404() throws IOException, InterruptedException {
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/prioritized/1");
+        URI url = URI.create("http://localhost:8080/history/1");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
@@ -62,10 +62,10 @@ public class PrioritizedHandlerTest {
     }
 
     @Test
-    public void prioritizedWithIncorrectRequestShouldReturn406() throws IOException, InterruptedException {
+    public void historyWithIncorrectRequestShouldReturn406() throws IOException, InterruptedException {
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/prioritized");
+        URI url = URI.create("http://localhost:8080/history");
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();

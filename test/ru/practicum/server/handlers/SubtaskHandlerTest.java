@@ -1,4 +1,4 @@
-package ru.practicum.server;
+package ru.practicum.server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -7,6 +7,7 @@ import ru.practicum.manager.InMemoryTaskManager;
 import ru.practicum.manager.TaskManager;
 import ru.practicum.model.Epic;
 import ru.practicum.model.Subtask;
+import ru.practicum.server.HttpTaskServer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class EpicHandlerTest {
+public class SubtaskHandlerTest {
     private TaskManager manager;
     private HttpTaskServer server;
     private Gson gson;
@@ -33,26 +34,29 @@ public class EpicHandlerTest {
     }
 
     @Test
-    public void epicsGetShouldReturnValidListWithCorrectFields() throws IOException, InterruptedException {
+    public void subtasksGetShouldReturnValidListWithCorrectFields() throws IOException, InterruptedException {
         initializeTasks(manager);
 
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics");
+        URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = client.send(request, handler);
 
-        class TaskListTypeToken extends TypeToken<List<Epic>> {
+        class TaskListTypeToken extends TypeToken<List<Subtask>> {
         }
-        List<Epic> taskList = gson.fromJson(response.body(), new TaskListTypeToken().getType());
+        List<Subtask> subtaskList = gson.fromJson(response.body(), new TaskListTypeToken().getType());
 
-        Epic expectedTask1 = manager.getEpicList().getFirst();
-        Epic actualTask1 = taskList.getFirst();
+        Subtask expectedTask1 = manager.getSubtaskList().getFirst();
+        Subtask expectedTask2 = manager.getSubtaskList().getLast();
+
+        Subtask actualTask1 = subtaskList.getFirst();
+        Subtask actualTask2 = subtaskList.getLast();
 
         assertEquals(expectedTask1.getId(), actualTask1.getId());
-        assertEquals(expectedTask1.getEpicSubtasks(), actualTask1.getEpicSubtasks());
+        assertEquals(expectedTask1.getEpicId(), actualTask1.getEpicId());
         assertEquals(expectedTask1.getName(), actualTask1.getName());
         assertEquals(expectedTask1.getDescription(), actualTask1.getDescription());
         assertEquals(expectedTask1.getType(), actualTask1.getType());
@@ -60,25 +64,36 @@ public class EpicHandlerTest {
         assertEquals(expectedTask1.getStartTime(), actualTask1.getStartTime());
         assertEquals(expectedTask1.getDuration(), actualTask1.getDuration());
 
+        assertEquals(expectedTask2.getId(), actualTask2.getId());
+        assertEquals(expectedTask2.getEpicId(), actualTask2.getEpicId());
+        assertEquals(expectedTask2.getName(), actualTask2.getName());
+        assertEquals(expectedTask2.getDescription(), actualTask2.getDescription());
+        assertEquals(expectedTask2.getType(), actualTask2.getType());
+        assertEquals(expectedTask2.getStatus(), actualTask2.getStatus());
+        assertEquals(expectedTask2.getStartTime(), actualTask2.getStartTime());
+        assertEquals(expectedTask2.getDuration(), actualTask2.getDuration());
+
         assertEquals(200, response.statusCode());
     }
 
     @Test
-    public void epicsGetWithIdShouldReturnValidEpicWithCorrectFields() throws IOException, InterruptedException {
+    public void subtasksGetWithIdShouldReturnValidSubtaskWithCorrectFields() throws IOException, InterruptedException {
         initializeTasks(manager);
 
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/0");
+        URI url = URI.create("http://localhost:8080/subtasks/1");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = client.send(request, handler);
 
-        Epic expectedTask = manager.getEpicList().getFirst();
-        Epic actualTask = gson.fromJson(response.body(), Epic.class);
+        Subtask expectedTask = manager.getSubtaskList().getFirst();
+
+        Subtask actualTask = gson.fromJson(response.body(), Subtask.class);
 
         assertEquals(expectedTask.getId(), actualTask.getId());
+        assertEquals(expectedTask.getEpicId(), actualTask.getEpicId());
         assertEquals(expectedTask.getName(), actualTask.getName());
         assertEquals(expectedTask.getDescription(), actualTask.getDescription());
         assertEquals(expectedTask.getType(), actualTask.getType());
@@ -90,15 +105,16 @@ public class EpicHandlerTest {
     }
 
     @Test
-    public void epicsPostShouldCorrectlyAddTaskToManager() throws IOException, InterruptedException {
+    public void subtasksPostShouldCorrectlyAddTaskToManager() throws IOException, InterruptedException {
+        initializeTasks(manager);
         // создаём задачу
-        Epic epic = new Epic("Test 2", "Testing task 2");
+        Subtask task = new Subtask("Test 2", "Testing task 2", manager.getEpicList().getFirst());
         // конвертируем её в JSON
-        String jsonTask = gson.toJson(epic);
+        String jsonTask = gson.toJson(task);
 
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics");
+        URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
@@ -110,41 +126,40 @@ public class EpicHandlerTest {
         assertEquals(200, response.statusCode());
 
         // проверяем, что создалась одна задача с корректным именем
-        List<Epic> tasksFromManager = manager.getEpicList();
+        List<Subtask> tasksFromManager = manager.getSubtaskList();
 
         assertNotNull(tasksFromManager, "Задачи не возвращаются");
-        assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
-        assertEquals("Test 2", tasksFromManager.getFirst().getName(), "Некорректное имя задачи");
+        assertEquals(3, tasksFromManager.size(), "Некорректное количество задач");
+        assertEquals("Test 2", tasksFromManager.getLast().getName(), "Некорректное имя задачи");
     }
 
     @Test
-    public void epicsDeleteShouldCorrectlyRemoveTaskFromManager() throws IOException, InterruptedException {
+    public void subtasksDeleteShouldCorrectlyRemoveTaskFromManager() throws IOException, InterruptedException {
         initializeTasks(manager);
 
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/0");
+        URI url = URI.create("http://localhost:8080/subtasks/1");
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = client.send(request, handler);
 
 
-        assertEquals(0, manager.getEpicList().size());
-        assertEquals(0, manager.getSubtaskList().size());
+        assertEquals(1, manager.getSubtaskList().size());
+        assertEquals("Новые обои", manager.getSubtaskList().getFirst().getName());
         assertEquals(201, response.statusCode());
     }
 
     @Test
-    public void shouldUpdateEpicIfIdExist() throws IOException, InterruptedException {
-        Epic epic = new Epic("EpicName", "EpicDescription");
-        manager.addEpic(epic);
-        String jsonTask = gson.toJson(manager.getEpicList().getFirst());
-        jsonTask = jsonTask.replace("EpicName", "NameOfEpic");
+    public void shouldUpdateSubtaskIfIdExist() throws IOException, InterruptedException {
+        initializeTasks(manager);
+        String jsonTask = gson.toJson(manager.getSubtaskList().getFirst());
+        jsonTask = jsonTask.replace("Старые обои", "Штукатурка");
 
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics");
+        URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(url)
                 .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
@@ -153,21 +168,41 @@ public class EpicHandlerTest {
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = client.send(request, handler);
 
-        assertEquals("NameOfEpic", manager.getEpicList().getFirst().getName());
+        assertEquals("Штукатурка", manager.getSubtaskList().getFirst().getName());
         assertEquals(201, response.statusCode());
     }
 
     @Test
-    public void shouldSendStatus404IfEpicNotExist() throws IOException, InterruptedException {
+    public void shouldSendStatus404IfSubtaskNotExist() throws IOException, InterruptedException {
         // создаём HTTP-клиент и запрос
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/3");
+        URI url = URI.create("http://localhost:8080/subtasks/0");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
         HttpResponse<String> response = client.send(request, handler);
 
         assertEquals(404, response.statusCode());
+    }
+
+    @Test
+    public void shouldSendStatus406IfSubtaskIsIntersectWithAny() throws IOException, InterruptedException {
+        initializeTasks(manager);
+        String jsonTask = gson.toJson(manager.getSubtaskList().getFirst());
+        jsonTask = jsonTask.replace("01.02.2025 08:00", "03.02.2025 08:00");
+
+        // создаём HTTP-клиент и запрос
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/subtasks");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(jsonTask))
+                .build();
+
+        HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
+        HttpResponse<String> response = client.send(request, handler);
+
+        assertEquals(406, response.statusCode());
     }
 
     @AfterEach

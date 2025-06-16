@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
-abstract class BaseHttpHandler implements HttpHandler {
+abstract public class BaseHttpHandler implements HttpHandler {
     protected final Gson gson;
     protected TaskManager taskManager;
 
